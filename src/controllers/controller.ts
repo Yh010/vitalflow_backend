@@ -1,5 +1,6 @@
 // example:
-// import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
+import { LLMResponse } from '../services/llmservice/llmservice.js';
 // import { items, Item } from '../models/item';
 
 // // Create an item
@@ -13,6 +14,19 @@
 //         next(error);
 //     }
 // };
+export const getLLMResponseController = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { inputText } = req.body;
+        console.log("input text is", inputText)
+        const llmresponse = await LLMResponse(inputText);
+        console.log("llm response is", inputText)
+        res.status(201).json({
+            msg: llmresponse
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 // // Read all items
 // export const getItems = (req: Request, res: Response, next: NextFunction) => {

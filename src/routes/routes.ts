@@ -1,5 +1,6 @@
 // example:
-// import { Router } from 'express';
+import { Router } from 'express';
+import { getLLMResponseController } from '../controllers/controller.js';
 // import {
 //     createItem,
 //     getItems,
@@ -8,7 +9,9 @@
 //     deleteItem,
 // } from '../controllers/itemController';
 
-// const router = Router();
+const router = Router();
+
+router.post('/llm', getLLMResponseController)
 
 // router.get('/', getItems);
 // router.get('/:id', getItemById);
@@ -16,4 +19,4 @@
 // router.put('/:id', updateItem);
 // router.delete('/:id', deleteItem);
 
-// export default router;
+export default router;
