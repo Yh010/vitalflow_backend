@@ -14,7 +14,9 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
     "@types/node": "^25.2.3",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
@@ -25,6 +27,9 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@google/genai": "^1.41.0"
+    "@google/genai": "^1.41.0",
+    "cors": "^2.8.6",
+    "multer": "^2.0.2",
+    "sarvamai": "^1.1.4"
   }
 }
