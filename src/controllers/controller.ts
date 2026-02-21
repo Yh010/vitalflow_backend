@@ -1,86 +1,61 @@
 // example:
-import type { Request, Response, NextFunction } from 'express';
-import { LLMResponse } from '../services/llmservice/llmservice.js';
-// import { items, Item } from '../models/item';
+import type { Request, Response, NextFunction } from "express";
+import { LLMResponse } from "../services/llmservice/llmservice.js";
+import {
+  SarvamSpeechToText,
+  SarvamTextToSpeech,
+} from "../services/voicethirdparty/sarvam.js";
+import {
+  convertSpeechToText,
+  convertTextToSpeech,
+} from "../services/voiceservice/voiceservice.js";
 
-// // Create an item
-// export const createItem = (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const { name } = req.body;
-//         const newItem: Item = { id: Date.now(), name };
-//         items.push(newItem);
-//         res.status(201).json(newItem);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
-export const getLLMResponseController = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { inputText } = req.body;
-        console.log("input text is", inputText)
-        const llmresponse = await LLMResponse(inputText);
-        console.log("llm response is", inputText)
-        res.status(201).json({
-            msg: llmresponse
-        })
-    } catch (error) {
-        next(error)
-    }
-}
+export const getLLMResponseController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const inputText = res.locals.inputText;
+    console.log("input text is", inputText);
+    const llmresponse = await LLMResponse(inputText);
+    console.log("llm response is", llmresponse);
+    res.locals.llmresponse = llmresponse;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
 
-// // Read all items
-// export const getItems = (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         res.json(items);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+export const convertSpeechToTextController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  if (!req.file) return res.status(400).json({ error: "No audio file." });
+  const filePath = req.file.path;
 
-// // Read single item
-// export const getItemById = (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const id = parseInt(req.params.id, 10);
-//         const item = items.find((i) => i.id === id);
-//         if (!item) {
-//             res.status(404).json({ message: 'Item not found' });
-//             return;
-//         }
-//         res.json(item);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+  try {
+    const textInput = await convertSpeechToText(filePath);
+    res.locals.inputText = textInput;
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
 
-// // Update an item
-// export const updateItem = (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const id = parseInt(req.params.id, 10);
-//         const { name } = req.body;
-//         const itemIndex = items.findIndex((i) => i.id === id);
-//         if (itemIndex === -1) {
-//             res.status(404).json({ message: 'Item not found' });
-//             return;
-//         }
-//         items[itemIndex].name = name;
-//         res.json(items[itemIndex]);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+export const convertTextToSpeechController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const llmresponse = res.locals.llmresponse;
+  if (!llmresponse) return res.status(400).json({ error: "No llm response." });
 
-// // Delete an item
-// export const deleteItem = (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const id = parseInt(req.params.id, 10);
-//         const itemIndex = items.findIndex((i) => i.id === id);
-//         if (itemIndex === -1) {
-//             res.status(404).json({ message: 'Item not found' });
-//             return;
-//         }
-//         const deletedItem = items.splice(itemIndex, 1)[0];
-//         res.json(deletedItem);
-//     } catch (error) {
-//         next(error);
-//     }
-// };
+  try {
+    const audioResponse = await convertTextToSpeech(llmresponse);
+    return res.status(200).json({ audio: audioResponse[0] });
+  } catch (err) {
+    next(err);
+  }
+};
