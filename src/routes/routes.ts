@@ -8,7 +8,6 @@ import { uploadMiddleware } from "../middlewares/upload.js";
 
 const router = Router();
 
-router.post("/llm", getLLMResponseController);
 router.post(
   "/talk",
   uploadMiddleware,
