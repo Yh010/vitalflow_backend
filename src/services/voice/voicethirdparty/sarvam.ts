@@ -1,5 +1,6 @@
 import { SarvamAIClient } from "sarvamai";
 import fs from "fs";
+import type { TextToSpeechLanguage } from "../../../types/types.js";
 
 class SarvamClient {
   public static instance: SarvamAIClient;
@@ -33,22 +34,25 @@ export async function SarvamSpeechToText(filePath: string) {
     file: audioFile,
     model: "saaras:v3",
     mode: "transcribe",
-    language_code: "hi-IN",
   });
 
   console.log(response.transcript);
+  console.log(response.language_code);
 
-  return response.transcript;
+  return { transcript: response.transcript, language: response.language_code };
 }
 
-export async function SarvamTextToSpeech(inputText: string) {
+export async function SarvamTextToSpeech(
+  inputText: string,
+  language_code: TextToSpeechLanguage,
+) {
   const client = SarvamClient.getInstance();
 
   const response = await client.textToSpeech.convert({
     text: inputText,
     model: "bulbul:v3",
     speaker: "shubh",
-    target_language_code: "en-IN",
+    target_language_code: language_code,
   });
 
   //console.log(response.audios[0]);
