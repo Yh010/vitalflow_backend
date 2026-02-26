@@ -28,7 +28,9 @@
   },
   "dependencies": {
     "@google/genai": "^1.41.0",
+    "@types/mongoose": "^5.11.96",
     "cors": "^2.8.6",
+    "mongoose": "^9.2.2",
     "multer": "^2.0.2",
     "sarvamai": "^1.1.4"
   }

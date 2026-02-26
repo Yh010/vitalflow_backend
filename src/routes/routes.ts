@@ -6,6 +6,7 @@ import {
   getLLMResponseController,
 } from "../controllers/controller.js";
 import { uploadMiddleware } from "../middlewares/upload.js";
+import userRouter from "./userRoutes.js";
 
 const router = Router();
 
@@ -19,4 +20,7 @@ router.post(
 
 router.get("/getChatHistory", getChatHistory);
 
+router.use("/", userRouter);
+
 export default router;
+
