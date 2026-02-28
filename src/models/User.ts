@@ -4,7 +4,10 @@ export interface DocumentUrl {
   _id?: Types.ObjectId;
   url: string;
   name: string;
-  prescription?: string;
+  type: string;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface AppointmentCallSummary {
@@ -23,11 +26,15 @@ export interface UserDocument extends Document {
   appointments_callsummary: AppointmentCallSummary[];
 }
 
-const DocumentUrlSchema = new Schema<DocumentUrl>({
-  url: { type: String, required: true },
-  name: { type: String, required: true },
-  prescription: { type: String },
-});
+const DocumentUrlSchema = new Schema<DocumentUrl>(
+  {
+    url: { type: String, required: true },
+    name: { type: String, required: true },
+    type: { type: String, default: "Other" },
+    description: { type: String },
+  },
+  { timestamps: true },
+);
 
 const AppointmentCallSummarySchema = new Schema<AppointmentCallSummary>({
   date: { type: Date, required: true },
