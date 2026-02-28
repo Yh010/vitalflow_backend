@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { User } from "../models/User.js";
+import { uploadUserDocumentToS3 } from "../utils/s3Upload.js";
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -89,14 +90,20 @@ export const getUserDocuments = async (
 export const addUserDocument = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { url, name, prescription } = req.body;
+    const { name, prescription } = req.body;
 
     const user = await User.findOne({ id: Number(id) });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.document_urls.push({ url, name, prescription });
+    if (!req.file) {
+      return res.status(400).json({ message: "No document file uploaded" });
+    }
+
+    const s3Url = await uploadUserDocumentToS3(req.file, Number(id));
+
+    user.document_urls.push({ url: s3Url, name, prescription });
     await user.save();
 
     const createdDocument = user.document_urls[user.document_urls.length - 1];
