@@ -16,6 +16,7 @@ import {
   updateUserAppointment,
   updateUserDocument,
 } from "../controllers/userController.js";
+import { uploadDocumentMiddleware } from "../middlewares/upload.js";
 
 const userRouter = Router();
 
@@ -28,7 +29,7 @@ userRouter.delete("/users/:id", deleteUser);
 
 // CRUD for documents embedded in each user
 userRouter.get("/users/:id/documents", getUserDocuments);
-userRouter.post("/users/:id/documents", addUserDocument);
+userRouter.post("/users/:id/documents", uploadDocumentMiddleware, addUserDocument);
 userRouter.get("/users/:id/documents/:documentId", getUserDocument);
 userRouter.put("/users/:id/documents/:documentId", updateUserDocument);
 userRouter.delete("/users/:id/documents/:documentId", deleteUserDocument);
