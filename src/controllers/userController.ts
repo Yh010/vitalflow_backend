@@ -90,7 +90,7 @@ export const getUserDocuments = async (
 export const addUserDocument = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const { name, prescription } = req.body;
+    const { name, type, description } = req.body;
 
     const user = await User.findOne({ id: Number(id) });
     if (!user) {
@@ -103,7 +103,13 @@ export const addUserDocument = async (req: Request, res: Response, next: NextFun
 
     const s3Url = await uploadUserDocumentToS3(req.file, Number(id));
 
-    user.document_urls.push({ url: s3Url, name, prescription });
+    if (!type) {
+      return res.status(400).json({ message: "Document type is required" });
+    }
+
+    const documentName = name || req.file.originalname;
+
+    user.document_urls.push({ url: s3Url, name: documentName, type, description });
     await user.save();
 
     const createdDocument = user.document_urls[user.document_urls.length - 1];
@@ -139,7 +145,7 @@ export const updateUserDocument = async (
 ) => {
   try {
     const { id, documentId } = req.params;
-    const { url, name, prescription } = req.body;
+    const { url, name, type, description } = req.body;
 
     const user = await User.findOne({ id: Number(id) });
     if (!user) {
@@ -153,7 +159,8 @@ export const updateUserDocument = async (
 
     if (url !== undefined) document.url = url;
     if (name !== undefined) document.name = name;
-    if (prescription !== undefined) document.prescription = prescription;
+    if (type !== undefined) document.type = type;
+    if (description !== undefined) document.description = description;
 
     await user.save();
 
