@@ -5,11 +5,12 @@ import config from "./config/config.js";
 import router from "./routes/routes.js";
 import cors from "cors";
 import { connectDB } from "./config/db.js";
+import { initializeRagPipeline } from "./services/rag/ragpipeline.js";
 
 const allowedOrigins = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:5174",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://localhost:5174",
 ];
 
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api", router);
 const startServer = async () => {
   try {
     await connectDB();
+    await initializeRagPipeline();
     app.listen(config.port, () => {
       console.log(`Server running on port ${config.port}`);
     });

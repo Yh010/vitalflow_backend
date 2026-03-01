@@ -6,7 +6,7 @@ import { s3BucketName, s3Client, s3Region } from "../config/s3.js";
 export const uploadUserDocumentToS3 = async (
   file: Express.Multer.File,
   userId: number,
-): Promise<string> => {
+): Promise<{ url: string; key: string }> => {
   const sanitizedFilename = file.originalname.replace(/\s+/g, "-");
   const key = `user-documents/${userId}/${Date.now()}-${sanitizedFilename}`;
 
@@ -21,6 +21,5 @@ export const uploadUserDocumentToS3 = async (
 
   const url = `https://${s3BucketName}.s3.${s3Region}.amazonaws.com/${key}`;
 
-  return url;
+  return { url, key };
 };
-
