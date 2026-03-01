@@ -30,9 +30,13 @@ app.use(
   }),
 );
 
+app.use("/", (req, res) => {
+  res.send("Welcome to vitalflow server");
+});
 app.use("/api/items", (req, res) => {
   res.send("hello world");
 });
+
 app.use("/api", router);
 
 const startServer = async () => {

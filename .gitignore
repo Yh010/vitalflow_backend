@@ -1,5 +1,5 @@
 node_modules
 .history
 .env
-
+dist
 src/callRecords
