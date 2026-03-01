@@ -1,0 +1,29 @@
+name: Deploy backend to EC2 (dev)
+
+on:
+  push:
+    branches: [ dev ]
+  workflow_dispatch:  # allow manual runs
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo (not strictly needed, but ok)
+        uses: actions/checkout@v4
+
+      - name: SSH and deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ${{ secrets.EC2_APP_DIR }}
+            git fetch origin
+            git checkout dev
+            git pull origin dev
+            npm install
+            npm run build
+            pm2 restart vitalflow-backend
