@@ -7,9 +7,9 @@ import cors from "cors";
 import { connectDB } from "./config/db.js";
 
 const allowedOrigins = [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:5174",
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://localhost:5174",
 ];
 
 const app = express();
@@ -29,9 +29,13 @@ app.use(
   }),
 );
 
+app.use("/", (req, res) => {
+  res.send("Welcome to vitalflow server");
+});
 app.use("/api/items", (req, res) => {
   res.send("hello world");
 });
+
 app.use("/api", router);
 
 const startServer = async () => {
